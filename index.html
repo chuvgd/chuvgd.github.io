@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN" class="scroll-smooth">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VGD | 长安大学 RoboMaster 机甲大师战队</title>
+	<meta name="description" content="VGD战队 - 穷且益坚，不缀青云之志。专注RoboMaster的高校战队。">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link
+		href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800;900&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap"
+		rel="stylesheet">
+
+	<script src="https://cdn.tailwindcss.com"></script>
+	<script>
+		tailwind.config = {
+			darkMode: 'class',
+			theme: {
+				extend: {
+					fontFamily: {
+						sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'],
+						mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+					},
+					colors: {
+						primary: {
+							50: '#f8fafc', 100: '#f1f5f9', 200: '#e2e8f0',
+							300: '#cbd5e1', 400: '#94a3b8', 500: '#64748b',
+							600: '#475569', 700: '#334155', 800: '#1e293b',
+							900: '#0f172a', 950: '#020617',
+						},
+						ak: {
+							blue: '#0ea5e9',   // 科技蓝
+							cyan: '#06b6d4',
+							amber: '#f59e0b',  // 警示橙/明黄
+							dark: '#0a0f18',   // 深邃终端黑
+						}
+					},
+					animation: {
+						'marquee': 'marquee 30s linear infinite',
+						'float': 'float 6s ease-in-out infinite',
+						'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+					},
+					keyframes: {
+						marquee: {
+							'0%': { transform: 'translateX(0)' },
+							'100%': { transform: 'translateX(-50%)' },
+						},
+						float: {
+							'0%, 100%': { transform: 'translateY(0)' },
+							'50%': { transform: 'translateY(-15px)' },
+						}
+					}
+				}
+			}
+		}
+	</script>
+
+	<style>
+		/* 方舟风格硬朗滚动条 */
+		::-webkit-scrollbar {
+			width: 6px;
+			height: 6px;
+		}
+
+		::-webkit-scrollbar-track {
+			background: transparent;
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #cbd5e1;
+			border-radius: 0px;
+		}
+
+		.dark ::-webkit-scrollbar-thumb {
+			background: #475569;
+		}
+
+		/* 高阶磨砂玻璃 (Glassmorphism) */
+		.glass {
+			background: rgba(255, 255, 255, 0.7);
+			backdrop-filter: blur(16px);
+			-webkit-backdrop-filter: blur(16px);
+			border: 1px solid rgba(255, 255, 255, 0.3);
+		}
+
+		.dark .glass {
+			background: rgba(15, 23, 42, 0.7);
+			border: 1px solid rgba(255, 255, 255, 0.05);
+		}
+
+		.glass-strong {
+			background: rgba(255, 255, 255, 0.85);
+			backdrop-filter: blur(24px);
+			-webkit-backdrop-filter: blur(24px);
+			border: 1px solid rgba(255, 255, 255, 0.4);
+		}
+
+		.dark .glass-strong {
+			background: rgba(10, 15, 24, 0.85);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+		}
+
+		/* 极淡机械网格 */
+		.mech-bg {
+			background-image:
+				linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+			background-size: 60px 60px;
+			mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+			-webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+		}
+
+		.dark .mech-bg {
+			background-image:
+				linear-gradient(rgba(148, 163, 184, 0.03) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(148, 163, 184, 0.03) 1px, transparent 1px);
+		}
+
+		/* 侧边栏动态 */
+		.nav-item {
+			transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+			border-left: 2px solid transparent;
+		}
+
+		.nav-item.active {
+			border-left: 3px solid #0ea5e9;
+			transform: translateX(6px);
+			background: linear-gradient(90deg, rgba(14, 165, 233, 0.1) 0%, transparent 100%);
+			color: #0ea5e9;
+			font-weight: bold;
+		}
+
+		/* 元素浮现动效 */
+		.reveal {
+			opacity: 0;
+			transform: translateY(24px);
+			transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.reveal.active {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		/* 隐藏滚动条 */
+		.hide-scrollbar::-webkit-scrollbar {
+			display: none;
+		}
+
+		.hide-scrollbar {
+			-ms-overflow-style: none;
+			scrollbar-width: none;
+		}
+
+		/* 机甲滚动悬停暂停 */
+		.pause-on-hover:hover .animate-marquee {
+			animation-play-state: paused;
+		}
+	</style>
+</head>
+
+<body
+	class="bg-primary-50 text-primary-900 dark:bg-ak-dark dark:text-primary-100 transition-colors duration-500 overflow-x-hidden selection:bg-ak-blue/30">
+
+	<script>
+		const SITE_CONFIG = {
+			base: {
+				teamName: "VGD",
+				university: "长安大学",
+				sloganTitle: "穷且益坚",
+				sloganSub: "不坠青云之志",
+				established: "2014",
+				// 使用低质量占位符 &q=40 加速首屏背景加载
+				heroBgUrl: "/assets/rmuc2026r-all-2.jpg",
+			},
+			stats: [
+				{ label: "TEAM", value: "40+", desc: "多学科融合" },
+				{ label: "EXPERIENCE", value: (new Date().getFullYear() - 2014), desc: "多年竞技底蕴" },
+			],
+			aboutText: "从机械结构的拓扑优化，到机器视觉与底层控制算法的深度解耦。VGD 战队始终秉承“穷且益坚，不坠青云之志”的信念。在 RoboMaster 的战场上，我们用一行行严谨的代码与精准咬合的齿轮，打破工程的边界，将疯狂的设想化作场上的利刃。",
+			robots: [
+				{ name: "英雄 / HERO", model: "", img: "/assets/hero.jpg", desc: "" },
+				{ name: "步兵 / INFANTRY", model: "全向", img: "/assets/infantry-1.jpg", desc: "" },
+				{ name: "步兵 / INFANTRY", model: "抬升", img: "/assets/infantry-2.jpg", desc: "" },
+				{ name: "步兵 / INFANTRY", model: "轮足", img: "/assets/infantry-3.jpg", desc: "" },
+				{ name: "工程 / ENGINEER", model: "", img: "/assets/engineer.jpg", desc: "" },
+				{ name: "哨兵 / SENTRY", model: "", img: "/assets/sentry.jpg", desc: "" },
+				{ name: "飞镖 / DART", model: "", img: "/assets/dart.jpg", desc: "" },
+				{ name: "空中 / DRONE", model: "", img: "/assets/drone.jpg", desc: "" },
+				{ name: "雷达 / RADAR", model: "", img: "/assets/radar.jpg", desc: "" },
+			],
+			honors: [
+				{ year: "2026", title: "北部分区赛 一等奖", desc: "突破历史最佳战绩" },
+				{ year: "2025", title: "南部分区赛 二等奖，全国赛三等奖", desc: "" },
+			],
+			team: [
+				{ name: "Hongliu", role: "Captain / 硬件组", avatar: "/assets/WU1_5141.JPG", quote: "喵" },
+				{ name: "Pure", role: "Leader / 电控", avatar: "/assets/1号-操作手-牛昊靓.JPG", quote: "你先别急" },
+				{ name: "Xingellllll", role: "Leader / 算法组", avatar: "/assets/WU1_5107.JPG", quote: "导航大神" },
+				{ name: "Serialist", role: "Eater / 来吃饭的", avatar: "https://www.serialist.top/assets/image/favicon.jpg", quote: "队友，好吃" },
+			]
+		};
+	</script>
+
+	<div class="fixed inset-0 pointer-events-none z-[-2] mech-bg opacity-40"></div>
+
+	<div id="hero-bg"
+		class="fixed top-0 left-0 w-full h-[100vh] z-[-3] bg-cover bg-center transition-transform duration-1000"></div>
+	<div id="hero-mask" class="fixed top-0 left-0 w-full h-[100vh] z-[-2] transition-all duration-300 bg-primary-900/0">
+	</div>
+
+	<button id="themeToggle"
+		class="fixed top-6 right-6 z-50 w-12 h-12 rounded-full glass-strong shadow-lg flex items-center justify-center hover:scale-110 transition-transform text-primary-600 dark:text-primary-300"
+		aria-label="切换主题">
+		<svg id="sunIcon" class="w-6 h-6 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+				d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+			</path>
+		</svg>
+		<svg id="moonIcon" class="w-6 h-6 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+				d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+		</svg>
+	</button>
+
+	<aside id="sideNav"
+		class="hidden md:flex fixed top-0 left-0 w-24 h-full glass-strong border-r border-primary-200/50 dark:border-primary-800/50 flex-col items-center py-8 z-40 transform -translate-x-full transition-transform duration-500 ease-out shadow-2xl">
+		<div class="w-12 h-12 bg-primary-900 dark:bg-primary-100 text-primary-50 dark:text-primary-900 flex items-center justify-center font-black text-xl mb-12"
+			style="clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%);">
+			V
+		</div>
+		<nav class="flex flex-col gap-8 w-full px-2">
+			<a href="#hero"
+				class="nav-item w-full text-center py-2 text-xs font-mono tracking-widest text-primary-500 hover:text-ak-blue"
+				data-target="hero">SYS</a>
+			<a href="#about"
+				class="nav-item w-full text-center py-2 text-xs font-mono tracking-widest text-primary-500 hover:text-ak-blue"
+				data-target="about">INFO</a>
+			<a href="#robots"
+				class="nav-item w-full text-center py-2 text-xs font-mono tracking-widest text-primary-500 hover:text-ak-blue"
+				data-target="robots">MECH</a>
+			<a href="#honors"
+				class="nav-item w-full text-center py-2 text-xs font-mono tracking-widest text-primary-500 hover:text-ak-blue"
+				data-target="honors">LOGS</a>
+			<a href="#team"
+				class="nav-item w-full text-center py-2 text-xs font-mono tracking-widest text-primary-500 hover:text-ak-blue"
+				data-target="team">CREW</a>
+		</nav>
+		<div class="mt-auto writing-vertical-rl text-xs font-mono text-primary-400 opacity-50 tracking-[0.3em]">
+			TERMINAL ACTIVE
+		</div>
+	</aside>
+
+	<main class="relative z-10">
+
+		<section id="hero" class="min-h-screen flex flex-col justify-center px-8 md:px-24 pt-20 pb-32">
+			<div class="max-w-5xl ml-0 md:ml-12">
+				<div class="flex items-center gap-4 mb-8 reveal">
+					<div class="h-1 w-12 bg-ak-blue"></div>
+					<span
+						class="font-mono text-xs tracking-[0.3em] text-primary-100 bg-primary-900/80 dark:bg-primary-100/10 dark:text-primary-300 px-3 py-1 rounded backdrop-blur-sm"
+						id="hero-established"></span>
+				</div>
+
+				<h1 class="text-7xl md:text-9xl lg:text-[10rem] font-black tracking-tighter uppercase mb-2 text-white drop-shadow-2xl reveal"
+					id="hero-title" style="transition-delay: 100ms;">
+				</h1>
+				<h2 class="text-3xl md:text-5xl font-bold tracking-widest mb-12 text-white drop-shadow-lg reveal"
+					style="transition-delay: 200ms;">
+					<span id="hero-slogan-1"></span><br>
+					<span class="text-ak-amber font-black" id="hero-slogan-2"></span>
+				</h2>
+
+				<div class="reveal" style="transition-delay: 300ms;">
+					<a href="#about"
+						class="inline-flex items-center gap-4 group relative overflow-hidden bg-primary-900 text-white dark:bg-primary-100 dark:text-primary-900 px-8 py-4 font-mono text-sm tracking-widest uppercase shadow-xl hover:shadow-ak-blue/20 transition-all rounded-sm">
+						<span class="relative z-10 font-bold">SYSTEM BOOT</span>
+						<svg class="w-4 h-4 relative z-10 group-hover:translate-x-1 transition-transform" fill="none"
+							stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="square" stroke-linejoin="miter" stroke-width="2"
+								d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+						</svg>
+						<div
+							class="absolute inset-0 bg-ak-blue transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left duration-300">
+						</div>
+					</a>
+				</div>
+			</div>
+		</section>
+
+		<section id="about"
+			class="py-32 px-8 md:px-24 glass-strong border-y border-primary-200/50 dark:border-primary-800/50 relative">
+			<div class="max-w-6xl mx-auto md:ml-16 relative z-10">
+				<div class="grid md:grid-cols-2 gap-16 items-start">
+					<div class="reveal">
+						<div class="flex items-center gap-2 mb-6">
+							<span class="w-2 h-2 rounded-full bg-ak-amber animate-pulse"></span>
+							<h3 class="font-mono text-xs tracking-[0.2em] text-primary-500 dark:text-primary-400">
+								MODULE_01: OVERVIEW</h3>
+						</div>
+						<h2 class="text-4xl font-bold mb-6">不止于竞技的舞台</h2>
+						<p class="text-lg leading-relaxed text-primary-700 dark:text-primary-300" id="about-text"></p>
+					</div>
+					<div class="grid grid-cols-1 sm:grid-cols-3 gap-6 reveal" id="stats-container"
+						style="transition-delay: 200ms;">
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<section id="robots" class="py-32 overflow-hidden relative">
+			<div class="px-8 md:px-24 max-w-6xl mx-auto md:ml-16 mb-16 reveal">
+				<div class="flex items-center gap-2 mb-4">
+					<span class="w-2 h-2 rounded-full bg-ak-blue"></span>
+					<h3 class="font-mono text-xs tracking-[0.2em] text-primary-500 dark:text-primary-400">MODULE_02:
+						DEPLOYMENT</h3>
+				</div>
+				<h2 class="text-4xl font-black tracking-widest">机甲列阵 <span
+						class="text-primary-400 dark:text-primary-600 font-light text-2xl">MECH LINEUP</span></h2>
+			</div>
+
+			<div class="w-full relative pause-on-hover pb-12 cursor-grab active:cursor-grabbing">
+				<div
+					class="absolute top-0 left-0 w-16 md:w-32 h-full bg-gradient-to-r from-primary-50 dark:from-ak-dark to-transparent z-10 pointer-events-none">
+				</div>
+				<div
+					class="absolute top-0 right-0 w-16 md:w-32 h-full bg-gradient-to-l from-primary-50 dark:from-ak-dark to-transparent z-10 pointer-events-none">
+				</div>
+
+				<div class="flex w-max" id="robots-marquee-wrapper">
+					<div class="flex gap-8 px-4 animate-marquee" id="robots-track-1"></div>
+					<div class="flex gap-8 px-4 animate-marquee" id="robots-track-2" aria-hidden="true"></div>
+				</div>
+			</div>
+		</section>
+
+		<section id="honors"
+			class="py-32 px-8 md:px-24 glass-strong border-y border-primary-200/50 dark:border-primary-800/50">
+			<div class="max-w-4xl mx-auto md:ml-16 reveal">
+				<div class="flex items-center gap-2 mb-12">
+					<span class="w-2 h-2 rounded-full bg-primary-400"></span>
+					<h3 class="font-mono text-xs tracking-[0.2em] text-primary-500 dark:text-primary-400">MODULE_03:
+						COMBAT LOGS</h3>
+				</div>
+				<div class="relative border-l-2 border-primary-300 dark:border-primary-700 ml-3 space-y-16"
+					id="honors-container">
+				</div>
+			</div>
+		</section>
+
+		<section id="team" class="py-32 px-8 md:px-24">
+			<div class="max-w-6xl mx-auto md:ml-16">
+				<div class="mb-16 reveal">
+					<div class="flex items-center gap-2 mb-4">
+						<span class="w-2 h-2 rounded-full bg-ak-amber"></span>
+						<h3 class="font-mono text-xs tracking-[0.2em] text-primary-500 dark:text-primary-400">MODULE_04:
+							OPERATORS</h3>
+					</div>
+					<h2 class="text-4xl font-black tracking-widest">团队成员 <span
+							class="text-primary-400 dark:text-primary-600 font-light text-2xl">CREW</span></h2>
+				</div>
+
+				<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6" id="team-container">
+				</div>
+			</div>
+		</section>
+
+		<section id="contact"
+			class="py-32 px-8 md:px-24 glass-strong border-t border-primary-200/50 dark:border-primary-800/50">
+			<div class="max-w-6xl mx-auto md:ml-16 grid md:grid-cols-2 gap-16">
+				<div class="reveal">
+					<h2 class="text-4xl font-bold mb-6">加入我们</h2>
+					<p class="text-primary-600 dark:text-primary-400 mb-8 leading-relaxed">
+						无论你是机械设计的爱好者、算法工程的痴迷者，还是底层电控开发的探索者，VGD 都期待你的加入。在这里，我们共同学习，把图纸与代码变成坚不可摧的战力。
+					</p>
+
+					<button onclick="openModal()"
+						class="w-full sm:w-auto mb-10 px-8 py-4 bg-ak-blue hover:bg-sky-400 text-white font-bold tracking-widest uppercase transition-colors rounded shadow-lg shadow-ak-blue/30 flex items-center justify-center gap-3">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+								d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1">
+							</path>
+						</svg>
+						加入我们
+					</button>
+
+					<div class="space-y-4">
+						<div class="flex items-center gap-4 p-4 rounded-xl bg-primary-100/50 dark:bg-primary-800/30">
+							<div
+								class="w-10 h-10 rounded-full bg-white dark:bg-primary-900 flex items-center justify-center text-ak-blue shadow-sm">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+									</path>
+								</svg>
+							</div>
+							<div>
+								<div class="text-sm font-bold">Email</div>
+								<div class="text-sm text-primary-500 dark:text-primary-400 font-mono mt-1">
+									ba3pt@chd.edu.cn</div>
+							</div>
+						</div>
+						<div class="flex items-center gap-4 p-4 rounded-xl bg-primary-100/50 dark:bg-primary-800/30">
+							<div
+								class="w-10 h-10 rounded-full bg-white dark:bg-primary-900 flex items-center justify-center text-ak-amber shadow-sm">
+								<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+									</path>
+									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+										d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+								</svg>
+							</div>
+							<div>
+								<div class="text-sm font-bold">研发基地</div>
+								<div class="text-sm text-primary-500 dark:text-primary-400 mt-1">长安大学 工程训练中心基地</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="reveal" style="transition-delay: 200ms;">
+					<div class="bg-primary-100/50 dark:bg-primary-800/30 rounded-3xl p-8 h-full flex flex-col">
+						<h3 class="text-xl font-bold mb-6">关于我们</h3>
+						<div class="grid grid-cols-2 gap-4 flex-grow">
+							<a href="#"
+								class="group p-4 rounded-xl bg-white/50 dark:bg-primary-900/50 hover:bg-white dark:hover:bg-primary-900 transition-colors">
+								<div class="font-bold mb-1 group-hover:text-ak-blue transition-colors">关于战队</div>
+								<div class="text-xs text-primary-500">历史与战术</div>
+							</a>
+							<a href="https://gitee.com/vgdboom"
+								class="group p-4 rounded-xl bg-white/50 dark:bg-primary-900/50 hover:bg-white dark:hover:bg-primary-900 transition-colors">
+								<div class="font-bold mb-1 group-hover:text-ak-blue transition-colors">开源计划</div>
+								<div class="text-xs text-primary-500">Gitee 仓库</div>
+							</a>
+							<a href="https://space.bilibili.com/1091878846"
+								class="group p-4 rounded-xl bg-white/50 dark:bg-primary-900/50 hover:bg-white dark:hover:bg-primary-900 transition-colors">
+								<div class="font-bold mb-1 group-hover:text-ak-blue transition-colors">官方账号</div>
+								<div class="text-xs text-primary-500">Bilibili 频道</div>
+							</a>
+							<a href="#"
+								class="group p-4 rounded-xl bg-white/50 dark:bg-primary-900/50 hover:bg-white dark:hover:bg-primary-900 transition-colors">
+								<div class="font-bold mb-1 group-hover:text-ak-blue transition-colors">联系我们</div>
+								<div class="text-xs text-primary-500">赞助与支持</div>
+							</a>
+						</div>
+
+						<div class="mt-8 pt-8 border-t border-primary-200 dark:border-primary-700">
+							<div class="flex justify-between items-center text-xs font-mono text-primary-500">
+								<span id="copyright-text"></span>
+								<span class="text-ak-amber">VGD，不坠青云之志</span>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+
+	<div id="recruitment-modal" class="fixed inset-0 z-[100] hidden">
+		<div class="absolute inset-0 bg-primary-900/60 backdrop-blur-sm" onclick="closeModal()"></div>
+		<div
+			class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-sm bg-white dark:bg-primary-900 border border-primary-200 dark:border-primary-700 shadow-2xl rounded-xl overflow-hidden">
+			<div
+				class="bg-primary-50 dark:bg-primary-950 px-6 py-4 flex justify-between items-center border-b border-primary-200 dark:border-primary-800">
+				<span class="font-mono font-bold text-sm tracking-widest text-primary-900 dark:text-primary-100"><span
+						class="text-ak-blue mr-2">■</span>身份验证</span>
+				<button onclick="closeModal()" class="text-primary-400 hover:text-red-500 transition-colors">
+					<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+						</path>
+					</svg>
+				</button>
+			</div>
+			<div class="p-8 flex flex-col items-center text-center">
+				<p class="text-sm text-primary-600 dark:text-primary-300 mb-6 font-medium leading-relaxed">
+					扫码申请接入 VGD 招募考核网络，或直接搜索群号加入。期待与你在代码与机械的世界相见。
+				</p>
+				<div class="p-2 border border-primary-200 dark:border-primary-700 rounded mb-6 bg-white">
+					<img src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=60&w=300&auto=format&fit=crop"
+						alt="群二维码" class="w-40 h-40 object-cover rounded">
+				</div>
+				<div
+					class="bg-primary-100 dark:bg-primary-800 px-6 py-3 rounded-full font-mono font-bold tracking-widest text-primary-900 dark:text-primary-100">
+					QQ 群：88888888
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		// DOM 初始化渲染
+		const initDOM = () => {
+			// 背景与标语
+			document.getElementById('hero-bg').style.backgroundImage = `url('${SITE_CONFIG.base.heroBgUrl}')`;
+			document.getElementById('hero-title').innerText = SITE_CONFIG.base.teamName;
+			document.getElementById('hero-slogan-1').innerText = SITE_CONFIG.base.sloganTitle;
+			document.getElementById('hero-slogan-2').innerText = SITE_CONFIG.base.sloganSub;
+			document.getElementById('hero-established').innerText = `TERMINAL // EST. ${SITE_CONFIG.base.established}`;
+			document.getElementById('about-text').innerText = SITE_CONFIG.aboutText;
+			document.getElementById('copyright-text').innerText = `© ${new Date().getFullYear()} ${SITE_CONFIG.base.teamName}.`;
+
+			// 战队数据
+			document.getElementById('stats-container').innerHTML = SITE_CONFIG.stats.map(s => `
+                <div class="glass p-6 rounded-2xl border-t-4 border-t-ak-blue">
+                    <div class="text-4xl md:text-5xl font-black font-mono mb-2 text-primary-900 dark:text-primary-50">${s.value}</div>
+                    <div class="text-xs font-mono tracking-widest text-primary-500 mb-2">${s.label}</div>
+                    <div class="text-sm text-primary-600 dark:text-primary-400 font-medium">${s.desc}</div>
+                </div>
+            `).join('');
+
+			// 生成流动机甲卡片
+			const robotCardHtml = SITE_CONFIG.robots.map(r => `
+                <div class="shrink-0 w-[300px] md:w-[360px] glass rounded-2xl overflow-hidden group shadow-lg">
+                    <div class="h-48 md:h-56 overflow-hidden relative">
+                        <img src="${r.img}" alt="${r.name}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700">
+                        <div class="absolute bottom-3 left-3 bg-primary-900/80 backdrop-blur text-white text-xs font-mono px-3 py-1 rounded border border-white/20 shadow">${r.model}</div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-xl font-bold tracking-widest mb-3">${r.name}</h4>
+                        <div class="h-1 w-12 bg-ak-blue rounded mb-4"></div>
+                        <p class="text-sm text-primary-600 dark:text-primary-400 leading-relaxed">${r.desc}</p>
+                    </div>
+                </div>
+            `).join('');
+
+			// 插入两个轨道实现无缝拼接
+			document.getElementById('robots-track-1').innerHTML = robotCardHtml;
+			document.getElementById('robots-track-2').innerHTML = robotCardHtml;
+
+			// 荣誉历程
+			document.getElementById('honors-container').innerHTML = SITE_CONFIG.honors.map((h, i) => `
+                <div class="relative pl-8 reveal" style="transition-delay: ${i * 100}ms">
+                    <div class="absolute left-[-9px] top-1.5 w-4 h-4 bg-primary-50 dark:bg-ak-dark border-4 border-ak-blue rounded-full"></div>
+                    <div class="inline-block px-3 py-1 bg-primary-100 dark:bg-primary-800 text-ak-blue font-mono text-xs font-bold rounded mb-3">${h.year}</div>
+                    <h4 class="text-xl font-bold mb-2">${h.title}</h4>
+                    <p class="text-primary-600 dark:text-primary-400 text-sm">${h.desc}</p>
+                </div>
+            `).join('');
+
+			// 队员风采
+			document.getElementById('team-container').innerHTML = SITE_CONFIG.team.map((t, i) => `
+                <div class="reveal group relative cursor-pointer" style="transition-delay: ${i * 100}ms">
+                    <div class="overflow-hidden rounded-2xl relative h-64 md:h-80 w-full mb-4 shadow-lg">
+                        <img src="${t.avatar}" loading="lazy" alt="${t.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                        <div class="absolute inset-0 bg-primary-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            <svg class="w-8 h-8 text-ak-amber mb-4 opacity-50" fill="currentColor" viewBox="0 0 24 24"><path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/></svg>
+                            <p class="text-white text-sm font-medium tracking-widest text-center">"${t.quote}"</p>
+                        </div>
+                    </div>
+                    <div class="px-2">
+                        <h4 class="text-lg font-black tracking-widest text-primary-900 dark:text-white">${t.name}</h4>
+                        <p class="text-xs font-mono text-ak-blue mt-1">${t.role}</p>
+                    </div>
+                </div>
+            `).join('');
+		};
+
+		// 立即执行渲染
+		initDOM();
+
+		// 滚动与动态交互逻辑
+		window.addEventListener('DOMContentLoaded', () => {
+			const sideNav = document.getElementById('sideNav');
+			const heroMask = document.getElementById('hero-mask');
+			const heroBg = document.getElementById('hero-bg');
+
+			window.addEventListener('scroll', () => {
+				const scrollY = window.scrollY;
+				const winH = window.innerHeight;
+
+				// 1. 首屏下拉：侧边导航栏划入
+				if (scrollY > winH * 0.2) {
+					sideNav.classList.remove('-translate-x-full');
+				} else {
+					sideNav.classList.add('-translate-x-full');
+				}
+
+				// 2. 背景变暗与模糊 (平滑过渡)
+				let ratio = Math.min(scrollY / winH, 1);
+				const isDark = document.documentElement.classList.contains('dark');
+
+				// 调整遮罩颜色，避免纯黑白，使用深邃的主题色
+				const alpha = ratio * 0.9;
+				if (isDark) {
+					heroMask.style.backgroundColor = `rgba(10, 15, 24, ${alpha})`;
+				} else {
+					heroMask.style.backgroundColor = `rgba(248, 250, 252, ${alpha})`; // slate-50
+				}
+				heroMask.style.backdropFilter = `blur(${ratio * 12}px)`;
+				heroMask.style.webkitBackdropFilter = `blur(${ratio * 12}px)`;
+
+				// 视差滚动
+				heroBg.style.transform = `translateY(${scrollY * 0.2}px)`;
+			});
+
+			// 3. 元素曝光动画 (Intersection Observer)
+			const revealObserver = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('active');
+					}
+				});
+			}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+			document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+			// 4. 滚动侦测导航侧边栏高亮
+			const sections = document.querySelectorAll('section');
+			const navItems = document.querySelectorAll('.nav-item');
+			const spyObserver = new IntersectionObserver((entries) => {
+				entries.forEach(entry => {
+					if (entry.isIntersecting) {
+						navItems.forEach(item => {
+							if (item.getAttribute('data-target') === entry.target.id) {
+								item.classList.add('active');
+							} else {
+								item.classList.remove('active');
+							}
+						});
+					}
+				});
+			}, { threshold: 0.3 });
+			sections.forEach(sec => spyObserver.observe(sec));
+
+			// 5. 主题切换
+			const themeBtn = document.getElementById('themeToggle');
+			const toggleTheme = () => {
+				document.documentElement.classList.toggle('dark');
+				localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+				window.dispatchEvent(new Event('scroll')); // 强制刷新背景遮罩色
+			};
+			themeBtn.addEventListener('click', toggleTheme);
+
+			// 初始化系统偏好主题
+			if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+				document.documentElement.classList.add('dark');
+			} else {
+				document.documentElement.classList.remove('dark');
+			}
+		});
+
+		// 弹窗控制
+		const modal = document.getElementById('recruitment-modal');
+		const modalContent = modal.children[1];
+		function openModal() {
+			modal.classList.remove('hidden');
+			setTimeout(() => {
+				modalContent.style.transform = 'translate(-50%, -50%) scale(1)';
+				modalContent.style.opacity = '1';
+				modalContent.style.transition = 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+			}, 10);
+		}
+		function closeModal() {
+			modalContent.style.transform = 'translate(-50%, -45%) scale(0.95)';
+			modalContent.style.opacity = '0';
+			setTimeout(() => modal.classList.add('hidden'), 300);
+		}
+		// 初始化弹窗样式
+		modalContent.style.transform = 'translate(-50%, -45%) scale(0.95)';
+		modalContent.style.opacity = '0';
+	</script>
+</body>
+
+</html>
