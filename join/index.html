@@ -233,6 +233,220 @@
 				max-width: 520px;
 			}
 		}
+
+		/* ===================== 滚动浮现 ===================== */
+		.reveal {
+			opacity: 0;
+			transform: translateY(28px);
+			transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+				transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+		}
+
+		.reveal.active {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		/* ===================== 赛场瞬间 · 放映片照片墙 ===================== */
+		.photo-wall {
+			max-width: 1040px;
+			margin: 0 auto 80px;
+			padding: 0 30px;
+		}
+
+		.photo-wall-head,
+		.sticky-wall-head {
+			text-align: center;
+			margin-bottom: 28px;
+		}
+
+		.photo-wall-head h2,
+		.sticky-wall-head h2 {
+			font-size: clamp(1.6rem, 5vw, 2.4rem);
+			font-weight: 900;
+			letter-spacing: 2px;
+			color: #ffd040;
+		}
+
+		.photo-wall-head p,
+		.sticky-wall-head p {
+			margin-top: 6px;
+			color: rgba(255, 255, 255, 0.72);
+			font-size: 0.95rem;
+			letter-spacing: 1px;
+		}
+
+		/* 胶卷相框：暗色胶片 + 上下齿孔 */
+		.film-frame {
+			position: relative;
+			background: #17181d;
+			padding: 16px 12px 14px;
+			border-radius: 5px;
+			box-shadow: 5px 8px 18px rgba(0, 0, 0, 0.5);
+			transform: rotate(var(--rot, 0deg));
+		}
+
+		.film-frame img {
+			display: block;
+			width: 100%;
+			aspect-ratio: var(--ar, 3 / 2);
+			object-fit: cover;
+			border: 1px solid rgba(255, 255, 255, 0.14);
+			background: #000;
+		}
+
+		.film-frame .sprocket {
+			position: absolute;
+			left: 12px;
+			right: 12px;
+			height: 10px;
+			background: #565b66;
+			background-image: repeating-linear-gradient(90deg,
+				#17181d 0 6px,
+				transparent 6px 13px);
+			border-radius: 1px;
+		}
+
+		.film-frame .sprocket.top { top: 3px; }
+		.film-frame .sprocket.bottom { bottom: 2px; }
+
+		.film-tag {
+			position: absolute;
+			bottom: 22px;
+			right: 20px;
+			font-family: "Courier New", monospace;
+			font-size: 0.7rem;
+			letter-spacing: 1px;
+			color: rgba(255, 255, 255, 0.8);
+			background: rgba(0, 0, 0, 0.45);
+			padding: 2px 7px;
+			border-radius: 2px;
+		}
+
+		.film-feature { margin-bottom: 18px; }
+		.film-feature .film-frame { --rot: -0.6deg; }
+		.film-feature .film-frame img { --ar: 16 / 9; }
+
+		/* 照片墙：多列流式，画面高低错落 */
+		.photo-strip {
+			columns: 3;
+			column-gap: 18px;
+		}
+
+		.photo-strip .film-photo {
+			break-inside: avoid;
+			margin-bottom: 18px;
+		}
+
+		.photo-strip .film-photo:nth-child(4n+1) .film-frame img { --ar: 3 / 2; }
+		.photo-strip .film-photo:nth-child(4n+2) .film-frame img { --ar: 4 / 3; }
+		.photo-strip .film-photo:nth-child(4n+3) .film-frame img { --ar: 3 / 4; }
+		.photo-strip .film-photo:nth-child(4n) .film-frame img { --ar: 1 / 1; }
+
+		.photo-strip .film-photo:nth-child(odd) .film-frame { --rot: -2.5deg; }
+		.photo-strip .film-photo:nth-child(even) .film-frame { --rot: 2deg; }
+
+		/* ===================== 运营宣传 · 撕纸便签墙 ===================== */
+		.sticky-wall {
+			max-width: 1040px;
+			margin: 0 auto 80px;
+			padding: 0 30px;
+		}
+
+		.sticky-board {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: flex-start;
+			gap: 24px;
+			padding: 26px 12px;
+		}
+
+		.note-inner {
+			position: relative;
+			width: 150px;
+			min-height: 132px;
+			padding: 28px 16px 18px;
+			background: var(--note, #ffd76e);
+			color: #2b2b2b;
+			box-shadow: 4px 7px 14px rgba(0, 0, 0, 0.4);
+			border-radius: 0 2px 6px 2px;
+			transform: rotate(var(--rot, -3deg)) translateY(var(--lift, 0px));
+			transition: transform 0.35s ease;
+		}
+
+		.note-inner:hover {
+			transform: rotate(0deg) translateY(-4px);
+		}
+
+		/* 顶部撕痕：从便签本撕下的毛边 */
+		.note-inner::before {
+			content: "";
+			position: absolute;
+			top: -1px;
+			left: 0;
+			right: 0;
+			height: 16px;
+			background: var(--note-tape, #f3c655);
+			clip-path: polygon(0 0, 100% 0, 100% 55%, 94% 25%, 88% 65%, 82% 30%, 76% 62%, 70% 28%, 64% 66%, 58% 32%, 52% 62%, 46% 26%, 40% 66%, 34% 32%, 28% 62%, 22% 28%, 16% 64%, 10% 30%, 4% 62%, 0 34%);
+		}
+
+		/* 右下角折起 */
+		.note-inner::after {
+			content: "";
+			position: absolute;
+			right: 0;
+			bottom: 0;
+			width: 0;
+			height: 0;
+			border-style: solid;
+			border-width: 0 0 24px 24px;
+			border-color: transparent transparent rgba(0, 0, 0, 0.14) transparent;
+		}
+
+		.note-title {
+			display: block;
+			font-weight: 900;
+			font-size: 1.05rem;
+			letter-spacing: 1px;
+			margin-bottom: 6px;
+		}
+
+		.note-sub {
+			display: block;
+			font-size: 0.8rem;
+			opacity: 0.75;
+			line-height: 1.55;
+		}
+
+		/* 便签配色 */
+		.note-inner.c1 { --note: #ffd76e; --note-tape: #eec45b; }
+		.note-inner.c2 { --note: #f7a8b8; --note-tape: #e690a0; }
+		.note-inner.c3 { --note: #a8e6cf; --note-tape: #8fd4b8; }
+		.note-inner.c4 { --note: #a8d8ea; --note-tape: #8ec6dc; }
+		.note-inner.c5 { --note: #ffd3b6; --note-tape: #f0bf9c; }
+		.note-inner.c6 { --note: #d5c6f0; --note-tape: #c2b0e3; }
+
+		/* 旋转 + 高低错落，制造凌乱感 */
+		.sticky-note:nth-child(1) .note-inner { --rot: -5deg; --lift: 8px; }
+		.sticky-note:nth-child(2) .note-inner { --rot: 4deg; --lift: -6px; }
+		.sticky-note:nth-child(3) .note-inner { --rot: -3deg; --lift: 12px; }
+		.sticky-note:nth-child(4) .note-inner { --rot: 6deg; --lift: 0px; }
+		.sticky-note:nth-child(5) .note-inner { --rot: -6deg; --lift: -8px; }
+		.sticky-note:nth-child(6) .note-inner { --rot: 3deg; --lift: 10px; }
+		.sticky-note:nth-child(7) .note-inner { --rot: -4deg; --lift: -4px; }
+		.sticky-note:nth-child(8) .note-inner { --rot: 5deg; --lift: 6px; }
+
+		@media (max-width: 820px) {
+			.photo-strip { columns: 2; }
+			.note-inner { width: 134px; min-height: 118px; }
+		}
+
+		@media (max-width: 480px) {
+			.photo-strip { columns: 1; }
+			.sticky-board { gap: 18px; }
+			.note-inner { width: 130px; min-height: 112px; }
+		}
 	</style>
 </head>
 
@@ -302,6 +516,196 @@
 		</div>
 	</div>
 
+	<!-- 赛场瞬间：放映片照片墙 -->
+	<div class="photo-wall">
+		<div class="photo-wall-head">
+			<h2>赛场瞬间</h2>
+			<p>往下滑动，一张张都是我们一起走过的路</p>
+		</div>
+
+		<figure class="film-feature reveal">
+			<div class="film-frame">
+				<span class="sprocket top"></span>
+				<span class="sprocket bottom"></span>
+				<img src="../assets/rmuc2026r-all-2webp" alt="战队合照" loading="lazy" decoding="async">
+				<span class="film-tag">VGD · 2026 · 全家福</span>
+			</div>
+		</figure>
+
+		<div class="photo-strip">
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5065webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5067webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5072webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5075webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5081webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5086webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5093webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5103webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5105webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5107webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5109webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5114webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5127webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5131webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5139webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+			<figure class="film-photo reveal">
+				<div class="film-frame">
+					<span class="sprocket top"></span>
+					<span class="sprocket bottom"></span>
+					<img src="../assets/WU1_5141webp" alt="赛场瞬间" loading="lazy" decoding="async">
+				</div>
+			</figure>
+		</div>
+	</div>
+
+	<!-- 运营宣传：撕纸便签墙 -->
+	<div class="sticky-wall">
+		<div class="sticky-wall-head">
+			<h2>运营宣传</h2>
+			<p>撕下一张便签，写下你的名字</p>
+		</div>
+		<div class="sticky-board">
+			<div class="sticky-note reveal">
+				<div class="note-inner c1">
+					<span class="note-title">海报设计</span>
+					<span class="note-sub">视觉 / 排版</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c2">
+					<span class="note-title">文案编辑</span>
+					<span class="note-sub">妙笔生花</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c3">
+					<span class="note-title">新媒体</span>
+					<span class="note-sub">公众号 / 视频号</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c4">
+					<span class="note-title">摄影摄像</span>
+					<span class="note-sub">记录每一帧</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c5">
+					<span class="note-title">视频剪辑</span>
+					<span class="note-sub">把热血剪成片</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c6">
+					<span class="note-title">周边设计</span>
+					<span class="note-sub">战队文创</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c2">
+					<span class="note-title">活动策划</span>
+					<span class="note-sub">招新 / 宣讲</span>
+				</div>
+			</div>
+			<div class="sticky-note reveal">
+				<div class="note-inner c3">
+					<span class="note-title">后勤保障</span>
+					<span class="note-sub">让队友安心上场</span>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<div class="section-contact">
 		<h2>扫码加入招新群</h2>
 		<div class="qrcode-placeholder">放置QQ群二维码</div>
@@ -314,6 +718,30 @@
 	<footer>
 		长安VGD战队 © 2027
 	</footer>
+
+	<script>
+		// 滚动浮现：照片墙 & 便签墙，逐张错开（一张一张）
+		(() => {
+			const observer = new IntersectionObserver((entries) => {
+				entries.forEach((entry) => {
+					if (entry.isIntersecting) {
+						entry.target.classList.add('active');
+						observer.unobserve(entry.target);
+					}
+				});
+			}, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+
+			document.querySelectorAll('.reveal').forEach((el) => {
+				const parent = el.parentElement;
+				if (parent && (parent.classList.contains('photo-strip') || parent.classList.contains('sticky-board'))) {
+					const idx = Array.prototype.indexOf.call(parent.children, el);
+					const step = parent.classList.contains('photo-strip') ? 90 : 70;
+					el.style.transitionDelay = (idx % 6) * step + 'ms';
+				}
+				observer.observe(el);
+			});
+		})();
+	</script>
 </body>
 
 </html>
