@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>VGD | 长安大学 RoboMaster 机甲大师战队</title>
+	<meta name="description" content="VGD战队 - 穷且益坚，不坠青云之志。长安大学 RoboMaster 机甲大师战队官方主页。">
+	<meta name="theme-color" content="#0c0d10">
+	<style>
+		:root {
+			--bg: #0c0d10;
+			--bg-2: #111217;
+			--panel: #16181d;
+			--line: rgba(242, 239, 230, .10);
+			--line-soft: rgba(242, 239, 230, .06);
+			--text: #f2efe6;
+			--muted: #9a968b;
+			--faint: #5d5a51;
+			--accent: #ffc93c;
+			--accent-dim: rgba(255, 201, 60, .14);
+			--sans: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
+				"Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+			--mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas,
+				"Liberation Mono", monospace;
+			--clip: 22px;
+			--ease: cubic-bezier(.16, 1, .3, 1);
+		}
+
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box
+		}
+
+		html {
+			scroll-behavior: smooth
+		}
+
+		body {
+			font-family: var(--sans);
+			background: var(--bg);
+			color: var(--text);
+			line-height: 1.6;
+			overflow-x: hidden;
+			-webkit-font-smoothing: antialiased;
+			text-rendering: optimizeLegibility;
+		}
+
+		img {
+			display: block;
+			max-width: 100%
+		}
+
+		a {
+			color: inherit;
+			text-decoration: none
+		}
+
+		::selection {
+			background: var(--accent);
+			color: #14100a
+		}
+
+		/* 细硬滚动条 */
+		::-webkit-scrollbar {
+			width: 5px;
+			height: 5px
+		}
+
+		::-webkit-scrollbar-track {
+			background: transparent
+		}
+
+		::-webkit-scrollbar-thumb {
+			background: #2a2b31
+		}
+
+		/* ---- 背景纹理 ---- */
+		body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			z-index: -1;
+			pointer-events: none;
+			background-image:
+				repeating-linear-gradient(45deg, rgba(255, 255, 255, .012) 0 1px, transparent 1px 26px);
+		}
+
+		/* ---- 通用容器 ---- */
+		.wrap {
+			max-width: 1160px;
+			margin: 0 auto;
+			padding: 0 clamp(20px, 5vw, 56px)
+		}
+
+		/* ---- 几何切角工具 ---- */
+		.cut-tr {
+			clip-path: polygon(0 0, calc(100% - var(--clip)) 0, 100% var(--clip), 100% 100%, 0 100%)
+		}
+
+		.cut-tl {
+			clip-path: polygon(var(--clip) 0, 100% 0, 100% 100%, 0 100%, 0 var(--clip))
+		}
+
+		.cut-bl {
+			clip-path: polygon(0 0, 100% 0, 100% 100%, var(--clip) 100%, 0 calc(100% - var(--clip)))
+		}
+
+		.cut-br {
+			clip-path: polygon(0 0, 100% 0, 100% calc(100% - var(--clip)), calc(100% - var(--clip)) 100%, 0 100%)
+		}
+
+		/* ---- 区块标题 ---- */
+		.sec-label {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			font-family: var(--mono);
+			font-size: 12px;
+			letter-spacing: .28em;
+			text-transform: uppercase;
+			color: var(--accent);
+		}
+
+		.sec-label::before {
+			content: "";
+			width: 10px;
+			height: 10px;
+			background: var(--accent);
+			clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+		}
+
+		.sec-label .no {
+			color: var(--faint)
+		}
+
+		.sec-title {
+			font-size: clamp(30px, 5vw, 52px);
+			font-weight: 900;
+			letter-spacing: .02em;
+			line-height: 1.1;
+			margin: 18px 0 0;
+		}
+
+		.sec-title .en {
+			display: block;
+			font-family: var(--mono);
+			font-size: .38em;
+			font-weight: 400;
+			letter-spacing: .34em;
+			color: var(--faint);
+			text-transform: uppercase;
+			margin-top: 10px;
+		}
+
+		/* ---- 浮现动画 ---- */
+		.reveal {
+			opacity: 0;
+			transform: translateY(26px);
+			transition: opacity .8s var(--ease), transform .8s var(--ease)
+		}
+
+		.reveal.active {
+			opacity: 1;
+			transform: none
+		}
+
+		/* ============================================================
+   顶部导航
+   ============================================================ */
+		.nav {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 60;
+			transition: background .4s, border-color .4s, padding .4s;
+			border-bottom: 1px solid transparent;
+		}
+
+		.nav.scrolled {
+			background: rgba(12, 13, 16, .86);
+			-webkit-backdrop-filter: blur(12px);
+			backdrop-filter: blur(12px);
+			border-color: var(--line)
+		}
+
+		.nav-inner {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			height: 68px;
+		}
+
+		.brand {
+			display: flex;
+			align-items: center;
+			gap: 14px;
+			font-weight: 900;
+			letter-spacing: .04em
+		}
+
+		.brand .mark {
+			width: 34px;
+			height: 34px;
+			background: var(--accent);
+			color: #14100a;
+			display: grid;
+			place-items: center;
+			font-weight: 900;
+			font-size: 15px;
+			clip-path: polygon(0 0, 100% 0, 100% 72%, 72% 100%, 0 100%);
+		}
+
+		.brand small {
+			display: block;
+			font-family: var(--mono);
+			font-weight: 400;
+			font-size: 10px;
+			letter-spacing: .24em;
+			color: var(--faint)
+		}
+
+		.nav-links {
+			display: flex;
+			align-items: center;
+			gap: 34px
+		}
+
+		.nav-links a {
+			font-size: 13px;
+			letter-spacing: .12em;
+			color: var(--muted);
+			position: relative;
+			padding: 6px 0;
+			transition: color .3s;
+		}
+
+		.nav-links a::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			bottom: 0;
+			height: 2px;
+			width: 0;
+			background: var(--accent);
+			transition: width .3s var(--ease);
+		}
+
+		.nav-links a:hover {
+			color: var(--text)
+		}
+
+		.nav-links a:hover::after {
+			width: 100%
+		}
+
+		.nav-cta {
+			font-size: 13px;
+			letter-spacing: .1em;
+			font-weight: 700;
+			color: #14100a;
+			background: var(--accent);
+			padding: 9px 18px;
+			clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
+			transition: filter .2s;
+		}
+
+		.nav-cta:hover {
+			filter: brightness(1.08)
+		}
+
+		.menu-btn {
+			display: none;
+			background: none;
+			border: none;
+			color: var(--text);
+			cursor: pointer;
+			padding: 8px
+		}
+
+		.menu-btn span {
+			display: block;
+			width: 22px;
+			height: 2px;
+			background: var(--text);
+			margin: 5px 0;
+			transition: .3s
+		}
+
+		/* ============================================================
+   封面 HERO
+   ============================================================ */
+		.hero {
+			min-height: 100svh;
+			display: flex;
+			align-items: center;
+			padding: 120px 0 80px;
+			position: relative;
+			overflow: hidden;
+		}
+
+		.hero-watermark {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			font-size: 44vw;
+			font-weight: 900;
+			line-height: 1;
+			letter-spacing: -.04em;
+			color: transparent;
+			-webkit-text-stroke: 1px rgba(255, 255, 255, .035);
+			pointer-events: none;
+			-webkit-user-select: none;
+			user-select: none;
+			white-space: nowrap;
+		}
+
+		.hero-grid {
+			display: grid;
+			grid-template-columns: 1.05fr .95fr;
+			gap: clamp(28px, 5vw, 64px);
+			align-items: center;
+			position: relative;
+			width: 100%;
+		}
+
+		.hero-kicker {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			font-family: var(--mono);
+			font-size: 12px;
+			letter-spacing: .3em;
+			color: var(--muted);
+			text-transform: uppercase;
+		}
+
+		.hero-kicker::before {
+			content: "";
+			width: 34px;
+			height: 2px;
+			background: var(--accent)
+		}
+
+		.hero-title {
+			font-size: clamp(76px, 16vw, 196px);
+			font-weight: 900;
+			line-height: .9;
+			letter-spacing: -.02em;
+			margin: 26px 0 8px;
+		}
+
+		.hero-title .dot {
+			color: var(--accent)
+		}
+
+		.hero-slogan {
+			font-size: clamp(22px, 3.4vw, 34px);
+			font-weight: 700;
+			letter-spacing: .08em;
+			line-height: 1.5;
+		}
+
+		.hero-slogan em {
+			font-style: normal;
+			color: var(--accent);
+			font-weight: 900
+		}
+
+		.hero-desc {
+			color: var(--muted);
+			max-width: 40ch;
+			margin: 20px 0 34px;
+			font-size: 15px
+		}
+
+		.hero-actions {
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			flex-wrap: wrap
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			gap: 10px;
+			font-weight: 800;
+			letter-spacing: .08em;
+			padding: 16px 30px;
+			background: var(--accent);
+			color: #14100a;
+			clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+			transition: filter .2s, transform .2s;
+		}
+
+		.btn:hover {
+			filter: brightness(1.08);
+			transform: translateY(-2px)
+		}
+
+		.btn.ghost {
+			background: transparent;
+			color: var(--text);
+			border: 1px solid var(--line);
+			clip-path: none;
+		}
+
+		.btn.ghost:hover {
+			border-color: var(--accent);
+			color: var(--accent)
+		}
+
+		.btn .ar {
+			transition: transform .25s
+		}
+
+		.btn:hover .ar {
+			transform: translateX(4px)
+		}
+
+		/* 封面图片框 */
+		.hero-visual {
+			position: relative
+		}
+
+		.hero-photo {
+			position: relative;
+			aspect-ratio: 4/5;
+			overflow: hidden;
+			clip-path: polygon(0 0, 100% 0, 100% calc(100% - 46px), calc(100% - 46px) 100%, 0 100%);
+		}
+
+		.hero-photo img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover
+		}
+
+		.hero-photo::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background: linear-gradient(180deg, transparent 55%, rgba(12, 13, 16, .55));
+		}
+
+		.hero-frame {
+			position: absolute;
+			inset: 0;
+			transform: translate(18px, 18px);
+			border: 1px solid var(--accent);
+			z-index: -1;
+			clip-path: polygon(0 0, 100% 0, 100% calc(100% - 46px), calc(100% - 46px) 100%, 0 100%);
+		}
+
+		.hero-tag {
+			position: absolute;
+			left: -8px;
+			bottom: 14px;
+			background: var(--accent);
+			color: #14100a;
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .18em;
+			padding: 9px 14px;
+			font-weight: 700;
+			clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+		}
+
+		.scroll-cue {
+			position: absolute;
+			left: 50%;
+			bottom: 26px;
+			transform: translateX(-50%);
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+			font-family: var(--mono);
+			font-size: 10px;
+			letter-spacing: .3em;
+			color: var(--faint);
+		}
+
+		.scroll-cue .line {
+			width: 1px;
+			height: 44px;
+			background: var(--line);
+			overflow: hidden;
+			position: relative
+		}
+
+		.scroll-cue .line::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 40%;
+			background: var(--accent);
+			transform: translateY(-100%);
+			animation: cue 2s var(--ease) infinite;
+		}
+
+		@keyframes cue {
+			0% {
+				transform: translateY(-100%)
+			}
+
+			100% {
+				transform: translateY(250%)
+			}
+		}
+
+		/* ============================================================
+   关于 / 数据
+   ============================================================ */
+		.section {
+			padding: clamp(72px, 10vw, 130px) 0;
+			position: relative
+		}
+
+		.section.alt {
+			background: var(--bg-2);
+			border-top: 1px solid var(--line-soft);
+			border-bottom: 1px solid var(--line-soft)
+		}
+
+		.about-grid {
+			display: grid;
+			grid-template-columns: 1.1fr .9fr;
+			gap: clamp(32px, 6vw, 72px);
+			margin-top: 54px
+		}
+
+		.about-lead {
+			font-size: clamp(17px, 2vw, 20px);
+			color: var(--text);
+			line-height: 1.9;
+			font-weight: 500
+		}
+
+		.about-text {
+			color: var(--muted);
+			margin-top: 20px;
+			font-size: 15px;
+			line-height: 1.9
+		}
+
+		.stats {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 20px;
+			align-content: start
+		}
+
+		.stat {
+			background: var(--panel);
+			border: 1px solid var(--line-soft);
+			padding: 28px 24px;
+			clip-path: polygon(0 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%);
+			transition: transform .35s var(--ease), border-color .35s;
+		}
+
+		.stat:hover {
+			transform: translateY(-4px);
+			border-color: var(--accent)
+		}
+
+		.stat .val {
+			font-size: clamp(34px, 4vw, 52px);
+			font-weight: 900;
+			color: var(--accent);
+			font-family: var(--mono);
+			letter-spacing: -.02em;
+			line-height: 1;
+		}
+
+		.stat .lbl {
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .24em;
+			color: var(--faint);
+			margin: 14px 0 6px
+		}
+
+		.stat .dsc {
+			font-size: 14px;
+			color: var(--muted)
+		}
+
+		/* ============================================================
+   机甲
+   ============================================================ */
+		.robots-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 22px;
+			margin-top: 54px
+		}
+
+		.robot {
+			background: var(--panel);
+			border: 1px solid var(--line-soft);
+			overflow: hidden;
+			clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 0 100%);
+			transition: transform .4s var(--ease), border-color .4s;
+		}
+
+		.robot:hover {
+			transform: translateY(-6px);
+			border-color: var(--accent)
+		}
+
+		.robot .ph {
+			aspect-ratio: 4/3;
+			overflow: hidden;
+			background: var(--bg)
+		}
+
+		.robot .ph img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform .7s var(--ease), opacity .5s
+		}
+
+		.robot:hover .ph img {
+			transform: scale(1.06)
+		}
+
+		.robot .info {
+			padding: 20px 22px 24px;
+			border-top: 1px solid var(--line-soft)
+		}
+
+		.robot .info h3 {
+			font-size: 20px;
+			font-weight: 800;
+			letter-spacing: .04em
+		}
+
+		.robot .info .en {
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .2em;
+			color: var(--faint);
+			margin-top: 2px
+		}
+
+		.robot .info .bar {
+			width: 30px;
+			height: 2px;
+			background: var(--accent);
+			margin: 14px 0 12px
+		}
+
+		/* ============================================================
+   成果（时间轴）
+   ============================================================ */
+		.timeline {
+			margin-top: 60px;
+			position: relative
+		}
+
+		.timeline::before {
+			content: "";
+			position: absolute;
+			left: 7px;
+			top: 0;
+			bottom: 0;
+			width: 1px;
+			background: var(--line);
+		}
+
+		.tl-item {
+			position: relative;
+			padding: 0 0 52px 46px
+		}
+
+		.tl-item:last-child {
+			padding-bottom: 0
+		}
+
+		.tl-item::before {
+			content: "";
+			position: absolute;
+			left: 0;
+			top: 4px;
+			width: 15px;
+			height: 15px;
+			background: var(--bg);
+			border: 3px solid var(--accent);
+			clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+		}
+
+		.tl-item .yr {
+			display: inline-block;
+			font-family: var(--mono);
+			font-weight: 700;
+			font-size: 13px;
+			letter-spacing: .16em;
+			color: var(--accent);
+			border: 1px solid var(--accent);
+			padding: 4px 12px;
+			margin-bottom: 14px;
+			clip-path: polygon(0 0, calc(100% - 9px) 0, 100% 9px, 100% 100%, 0 100%);
+		}
+
+		.tl-item h3 {
+			font-size: clamp(19px, 2.4vw, 26px);
+			font-weight: 800
+		}
+
+		.tl-item p {
+			color: var(--muted);
+			margin-top: 8px;
+			font-size: 14px
+		}
+
+		/* ============================================================
+   队员
+   ============================================================ */
+		.team-grid {
+			display: grid;
+			grid-template-columns: repeat(4, 1fr);
+			gap: 22px;
+			margin-top: 54px
+		}
+
+		.member {
+			position: relative
+		}
+
+		.member .ph {
+			aspect-ratio: 3/4;
+			overflow: hidden;
+			background: var(--panel);
+			clip-path: polygon(0 0, 100% 0, 100% calc(100% - 30px), calc(100% - 30px) 100%, 0 100%);
+		}
+
+		.member .ph img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform .7s var(--ease), filter .7s;
+			filter: saturate(.86)
+		}
+
+		.member:hover .ph img {
+			transform: scale(1.05);
+			filter: saturate(1)
+		}
+
+		.member .info {
+			margin-top: 14px
+		}
+
+		.member .info h4 {
+			font-size: 16px;
+			font-weight: 800;
+			letter-spacing: .02em
+		}
+
+		.member .info .role {
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .14em;
+			color: var(--accent);
+			margin-top: 4px
+		}
+
+		/* ============================================================
+   招新
+   ============================================================ */
+		.join {
+			position: relative;
+			overflow: hidden;
+			background: var(--accent);
+			color: #14100a;
+			clip-path: polygon(0 0, 100% 0, 100% calc(100% - 34px), calc(100% - 34px) 100%, 0 100%);
+		}
+
+		.join-inner {
+			display: grid;
+			grid-template-columns: 1.3fr .7fr;
+			gap: 40px;
+			align-items: center;
+			padding: clamp(60px, 8vw, 100px) 0;
+		}
+
+		.join h2 {
+			font-size: clamp(34px, 5.5vw, 64px);
+			font-weight: 900;
+			line-height: 1.05;
+			letter-spacing: .01em
+		}
+
+		.join .sub {
+			font-size: 16px;
+			margin-top: 20px;
+			max-width: 46ch;
+			color: #4a3a0a;
+			font-weight: 500
+		}
+
+		.join-cta {
+			display: inline-flex;
+			align-items: center;
+			gap: 12px;
+			margin-top: 30px;
+			background: #14100a;
+			color: var(--accent);
+			font-weight: 800;
+			letter-spacing: .06em;
+			padding: 18px 34px;
+			transition: transform .25s;
+			clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 14px, 100% 100%, 0 100%);
+		}
+
+		.join-cta:hover {
+			transform: translateY(-3px)
+		}
+
+		.join-qr {
+			background: #14100a;
+			color: var(--text);
+			padding: 30px;
+			text-align: center;
+			justify-self: center;
+			clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 0 100%);
+		}
+
+		.join-qr .big {
+			font-family: var(--mono);
+			font-size: 34px;
+			font-weight: 900;
+			color: var(--accent);
+			letter-spacing: .04em
+		}
+
+		.join-qr .lbl {
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .26em;
+			color: var(--muted);
+			margin-top: 10px
+		}
+
+		/* ============================================================
+   联系 + 页脚
+   ============================================================ */
+		.contact-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 22px;
+			margin-top: 54px
+		}
+
+		.contact-card {
+			background: var(--panel);
+			border: 1px solid var(--line-soft);
+			padding: 28px 24px;
+			clip-path: polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 0 100%);
+			transition: transform .35s var(--ease), border-color .35s;
+		}
+
+		.contact-card:hover {
+			transform: translateY(-4px);
+			border-color: var(--accent)
+		}
+
+		.contact-card .t {
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .24em;
+			color: var(--faint);
+			text-transform: uppercase
+		}
+
+		.contact-card .v {
+			margin-top: 14px;
+			font-size: 16px;
+			font-weight: 700;
+			color: var(--text)
+		}
+
+		.contact-card .v a:hover {
+			color: var(--accent)
+		}
+
+		.contact-card .d {
+			margin-top: 6px;
+			font-size: 13px;
+			color: var(--muted)
+		}
+
+		.footer {
+			border-top: 1px solid var(--line);
+			padding: 44px 0;
+			background: var(--bg-2)
+		}
+
+		.footer-inner {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 20px;
+			flex-wrap: wrap
+		}
+
+		.footer .brand {
+			font-size: 16px
+		}
+
+		.footer small {
+			font-family: var(--mono);
+			font-size: 11px;
+			letter-spacing: .1em;
+			color: var(--faint)
+		}
+
+		.footer .motto {
+			font-size: 13px;
+			color: var(--accent);
+			letter-spacing: .2em;
+			font-weight: 700
+		}
+
+		/* ============================================================
+   响应式
+   ============================================================ */
+		@media (max-width:1024px) {
+			.hero-grid {
+				grid-template-columns: 1fr
+			}
+
+			.hero-visual {
+				max-width: 520px
+			}
+
+			.robots-grid {
+				grid-template-columns: repeat(2, 1fr)
+			}
+
+			.team-grid {
+				grid-template-columns: repeat(3, 1fr)
+			}
+
+			.join-inner {
+				grid-template-columns: 1fr;
+				gap: 44px
+			}
+
+			.join-qr {
+				justify-self: start
+			}
+
+			.contact-grid {
+				grid-template-columns: 1fr 1fr
+			}
+		}
+
+		@media (max-width:680px) {
+			.nav-links {
+				position: fixed;
+				inset: 68px 0 auto 0;
+				background: rgba(12, 13, 16, .97);
+				flex-direction: column;
+				padding: 26px;
+				gap: 22px;
+				border-bottom: 1px solid var(--line);
+				transform: translateY(-12px);
+				opacity: 0;
+				pointer-events: none;
+				transition: .3s var(--ease)
+			}
+
+			.nav-links.open {
+				transform: none;
+				opacity: 1;
+				pointer-events: auto
+			}
+
+			.menu-btn {
+				display: block
+			}
+
+			.robots-grid {
+				grid-template-columns: 1fr
+			}
+
+			.team-grid {
+				grid-template-columns: repeat(2, 1fr)
+			}
+
+			.contact-grid {
+				grid-template-columns: 1fr
+			}
+
+			.stats {
+				grid-template-columns: 1fr 1fr
+			}
+
+			.hero-title {
+				font-size: clamp(70px, 24vw, 120px)
+			}
+		}
+
+		@media (max-width:400px) {
+			.team-grid {
+				grid-template-columns: 1fr
+			}
+
+			.stats {
+				grid-template-columns: 1fr
+			}
+		}
+
+		/* 减弱动效偏好 */
+		@media (prefers-reduced-motion:reduce) {
+			* {
+				animation: none !important;
+				transition: none !important
+			}
+
+			html {
+				scroll-behavior: auto
+			}
+
+			.reveal {
+				opacity: 1;
+				transform: none
+			}
+		}
+	</style>
+</head>
+
+<body>
+
+	<header class="nav" id="nav">
+		<div class="wrap nav-inner">
+			<a href="#hero" class="brand">
+				<span class="mark">V</span>
+				<span>VGD<small>长安大学 · ROBOMASTER</small></span>
+			</a>
+			<nav class="nav-links" id="navLinks">
+				<a href="#about">关于</a>
+				<a href="#robots">机甲</a>
+				<a href="#honors">成果</a>
+				<a href="#team">队员</a>
+				<a href="#join">招新</a>
+				<a href="#contact">联系</a>
+			</nav>
+			<div style="display:flex;align-items:center;gap:16px">
+				<a href="join/index.html" class="nav-cta">加入我们</a>
+				<button class="menu-btn" id="menuBtn" type="button"
+					aria-label="菜单"><span></span><span></span><span></span></button>
+			</div>
+		</div>
+	</header>
+
+	<main id="app"></main>
+
+	<script>
+		/* ============================================================
+		   内容配置 —— 所有文案与图片在此处统一维护
+		   ============================================================ */
+		const SITE = {
+			nav: [
+				{ label: "关于", href: "#about" },
+				{ label: "机甲", href: "#robots" },
+				{ label: "成果", href: "#honors" },
+				{ label: "队员", href: "#team" },
+				{ label: "招新", href: "#join" },
+				{ label: "联系", href: "#contact" },
+			],
+			hero: {
+				kicker: "长安大学 · ROBOMASTER · EST. 2014",
+				title: "VGD",
+				sloganTop: "穷且益坚",
+				sloganBottom: "不坠青云之志",
+				desc: "从机械结构的拓扑优化，到机器视觉与底层控制算法的深度解耦——在 RoboMaster 的战场上，把疯狂的设想，化作场上的利刃。",
+				btnPrimary: { label: "了解我们", href: "#about" },
+				btnGhost: { label: "招新报名", href: "join/index.html" },
+				photo: "assets/rmuc2026r-all-2.webp",
+				tag: "2026 · 区域赛合影"
+			},
+			about: {
+				label: "关于",
+				no: "01",
+				title: "不止于竞技的舞台",
+				en: "ABOUT",
+				lead: "VGD 战队始终秉承「穷且益坚，不坠青云之志」的信念。",
+				text: "在 RoboMaster 的战场上，我们用一行行严谨的代码与精准咬合的齿轮，打破工程的边界。这里不止是竞技，更是多学科碰撞、把图纸与算法变成真实战力的地方。",
+				stats: [
+					{ value: "40+", label: "TEAM", desc: "多学科融合战队" },
+					{ value: "12", label: "YEARS", desc: "多年竞技底蕴" }
+				]
+			},
+			robots: {
+				label: "机甲",
+				no: "02",
+				title: "机甲列阵",
+				en: "MECH LINEUP",
+				items: [
+					{ name: "英雄机器人", en: "HERO", img: "assets/hero.webp" },
+					{ name: "步兵机器人", en: "INFANTRY · 全向", img: "assets/infantry-1.webp" },
+					{ name: "步兵机器人", en: "INFANTRY · 抬升", img: "assets/infantry-2.webp" },
+					{ name: "步兵机器人", en: "INFANTRY · 轮足", img: "assets/infantry-3.webp" },
+					{ name: "工程机器人", en: "ENGINEER", img: "assets/engineer.webp" },
+					{ name: "哨兵机器人", en: "SENTRY", img: "assets/sentry.webp" },
+					{ name: "飞镖发射", en: "DART", img: "assets/dart.webp" },
+					{ name: "空中机器人", en: "DRONE", img: "assets/drone.webp" },
+					{ name: "雷达站", en: "RADAR", img: "assets/radar.webp" }
+				]
+			},
+			honors: {
+				label: "成果",
+				no: "03",
+				title: "荣誉历程",
+				en: "ACHIEVEMENTS",
+				items: [
+					{ year: "2026", title: "北部分区赛 一等奖", desc: "突破历史最佳战绩" },
+					{ year: "2025", title: "南部分区赛 二等奖 · 全国赛三等奖", desc: "稳步进阶，锋芒初现" }
+				]
+			},
+			team: {
+				label: "队员",
+				no: "04",
+				title: "团队成员",
+				en: "CREW",
+				items: [
+				]
+			},
+			join: {
+				title: "下一块拼图，是你。",
+				sub: "无论你是机械设计的爱好者、算法工程的痴迷者，还是底层电控开发的探索者，VGD 都期待你的加入。扫码或搜索群号，加入招新考核。",
+				qq: "1054494290",
+				qqLabel: "QQ 招新群"
+			},
+			contact: {
+				label: "联系",
+				no: "05",
+				title: "联系方式",
+				en: "CONTACT",
+				items: [
+					{ t: "EMAIL", v: "ba3pt@chd.edu.cn", href: "mailto:ba3pt@chd.edu.cn", d: "官方联系邮箱" },
+					{ t: "BASE", v: "长安大学 工程训练中心基地", d: "研发基地" },
+					{ t: "SOCIAL", v: "Bilibili · Gitee", href: "https://space.bilibili.com/1091878846", d: "官方账号 · 开源仓库" }
+				]
+			},
+			footer: {
+				motto: "VGD，不坠青云之志",
+				university: "长安大学"
+			}
+		};
+
+		/* ---- 渲染 ---- */
+		const app = document.getElementById("app");
+		const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+		app.innerHTML = `
+  <!-- 封面 -->
+  <section class="hero" id="hero">
+    <div class="hero-watermark">VGD</div>
+    <div class="wrap">
+      <div class="hero-grid">
+        <div>
+          <span class="hero-kicker reveal">${esc(SITE.hero.kicker)}</span>
+          <h1 class="hero-title reveal">${esc(SITE.hero.title)}<span class="dot">.</span></h1>
+          <p class="hero-slogan reveal">${esc(SITE.hero.sloganTop)}<br><em>${esc(SITE.hero.sloganBottom)}</em></p>
+          <p class="hero-desc reveal">${esc(SITE.hero.desc)}</p>
+          <div class="hero-actions reveal">
+            <a class="btn" href="${esc(SITE.hero.btnPrimary.href)}">${esc(SITE.hero.btnPrimary.label)}<span class="ar">→</span></a>
+            <a class="btn ghost" href="${esc(SITE.hero.btnGhost.href)}">${esc(SITE.hero.btnGhost.label)}</a>
+          </div>
+        </div>
+        <div class="hero-visual reveal">
+          <div class="hero-frame"></div>
+          <div class="hero-photo">
+            <img src="${esc(SITE.hero.photo)}" alt="${esc(SITE.hero.tag)}" fetchpriority="high">
+          </div>
+          <span class="hero-tag">${esc(SITE.hero.tag)}</span>
+        </div>
+      </div>
+    </div>
+    <div class="scroll-cue"><span>SCROLL</span><span class="line"></span></div>
+  </section>
+
+  <!-- 关于 -->
+  <section class="section" id="about">
+    <div class="wrap">
+      <span class="sec-label reveal"><span class="no">${esc(SITE.about.no)}</span>${esc(SITE.about.label)}</span>
+      <h2 class="sec-title reveal">${esc(SITE.about.title)}<span class="en">${esc(SITE.about.en)}</span></h2>
+      <div class="about-grid">
+        <div class="reveal">
+          <p class="about-lead">${esc(SITE.about.lead)}</p>
+          <p class="about-text">${esc(SITE.about.text)}</p>
+        </div>
+        <div class="stats">
+          ${SITE.about.stats.map((s, i) => `
+            <div class="stat reveal" style="transition-delay:${i * 90}ms">
+              <div class="val">${esc(s.value)}</div>
+              <div class="lbl">${esc(s.label)}</div>
+              <div class="dsc">${esc(s.desc)}</div>
+            </div>`).join("")}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 机甲 -->
+  <section class="section alt" id="robots">
+    <div class="wrap">
+      <span class="sec-label reveal"><span class="no">${esc(SITE.robots.no)}</span>${esc(SITE.robots.label)}</span>
+      <h2 class="sec-title reveal">${esc(SITE.robots.title)}<span class="en">${esc(SITE.robots.en)}</span></h2>
+      <div class="robots-grid">
+        ${SITE.robots.items.map((r, i) => `
+          <div class="robot reveal" style="transition-delay:${(i % 3) * 90}ms">
+            <div class="ph"><img src="${esc(r.img)}" alt="${esc(r.name)}" loading="lazy"></div>
+            <div class="info">
+              <h3>${esc(r.name)}</h3>
+              <div class="en">${esc(r.en)}</div>
+              <div class="bar"></div>
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>
+  </section>
+
+  <!-- 成果 -->
+  <section class="section" id="honors">
+    <div class="wrap">
+      <span class="sec-label reveal"><span class="no">${esc(SITE.honors.no)}</span>${esc(SITE.honors.label)}</span>
+      <h2 class="sec-title reveal">${esc(SITE.honors.title)}<span class="en">${esc(SITE.honors.en)}</span></h2>
+      <div class="timeline">
+        ${SITE.honors.items.map((h, i) => `
+          <div class="tl-item reveal" style="transition-delay:${i * 120}ms">
+            <span class="yr">${esc(h.year)}</span>
+            <h3>${esc(h.title)}</h3>
+            <p>${esc(h.desc)}</p>
+          </div>`).join("")}
+      </div>
+    </div>
+  </section>
+
+  <!-- 队员 -->
+  <section class="section alt" id="team">
+    <div class="wrap">
+      <span class="sec-label reveal"><span class="no">${esc(SITE.team.no)}</span>${esc(SITE.team.label)}</span>
+      <h2 class="sec-title reveal">${esc(SITE.team.title)}<span class="en">${esc(SITE.team.en)}</span></h2>
+      <div class="team-grid">
+        ${SITE.team.items.map((m, i) => `
+          <div class="member reveal" style="transition-delay:${(i % 4) * 80}ms">
+            <div class="ph"><img src="${esc(m.img)}" alt="${esc(m.name)}" loading="lazy"></div>
+            <div class="info">
+              <h4>${esc(m.name)}</h4>
+              <div class="role">${esc(m.role)}</div>
+            </div>
+          </div>`).join("")}
+      </div>
+    </div>
+  </section>
+
+  <!-- 招新 -->
+  <section class="join" id="join">
+    <div class="wrap join-inner">
+      <div class="reveal">
+        <h2>${esc(SITE.join.title)}</h2>
+        <p class="sub">${esc(SITE.join.sub)}</p>
+        <a class="join-cta" href="join/index.html">前往招新页面 <span>→</span></a>
+      </div>
+      <div class="join-qr reveal">
+        <div class="big">${esc(SITE.join.qq)}</div>
+        <div class="lbl">${esc(SITE.join.qqLabel)}</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 联系 -->
+  <section class="section" id="contact">
+    <div class="wrap">
+      <span class="sec-label reveal"><span class="no">${esc(SITE.contact.no)}</span>${esc(SITE.contact.label)}</span>
+      <h2 class="sec-title reveal">${esc(SITE.contact.title)}<span class="en">${esc(SITE.contact.en)}</span></h2>
+      <div class="contact-grid">
+        ${SITE.contact.items.map((c, i) => `
+          <div class="contact-card reveal" style="transition-delay:${i * 90}ms">
+            <div class="t">${esc(c.t)}</div>
+            <div class="v">${c.href ? `<a href="${esc(c.href)}" target="_blank" rel="noopener">${esc(c.v)}</a>` : esc(c.v)}</div>
+            <div class="d">${esc(c.d)}</div>
+          </div>`).join("")}
+      </div>
+    </div>
+  </section>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <a href="#hero" class="brand"><span class="mark">V</span><span>VGD<small>${esc(SITE.footer.university)} · ROBOMASTER</small></span></a>
+      <span class="motto">${esc(SITE.footer.motto)}</span>
+      <small>© ${new Date().getFullYear()} VGD. All rights reserved.</small>
+    </div>
+  </footer>
+`;
+
+		/* ---- 交互 ---- */
+		const nav = document.getElementById("nav");
+		const menuBtn = document.getElementById("menuBtn");
+		const navLinks = document.getElementById("navLinks");
+
+		// 导航背景 + 移动端菜单
+		const onScroll = () => nav.classList.toggle("scrolled", window.scrollY > 40);
+		window.addEventListener("scroll", onScroll, { passive: true });
+		onScroll();
+
+		menuBtn.addEventListener("click", () => navLinks.classList.toggle("open"));
+		navLinks.querySelectorAll("a").forEach(a => a.addEventListener("click", () => navLinks.classList.remove("open")));
+
+		// 滚动浮现
+		const revealObs = new IntersectionObserver(entries => {
+			entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("active"); revealObs.unobserve(e.target); } });
+		}, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+		document.querySelectorAll(".reveal").forEach(el => revealObs.observe(el));
+
+		console.log(`
+====================================
+= 加入长安大学 VGD 战队软件组谢谢喵！ =
+=   联系方式：serialist@chuvgd.cn   =
+=       flag{vgd_software_w3lc0m3}    =
+====================================`
+		);
+
+	</script>
+</body>
+
+</html>
